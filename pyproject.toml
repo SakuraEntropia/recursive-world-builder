@@ -1,23 +1,60 @@
 [build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
 
 [project]
 name = "recursive-world-builder"
 version = "0.1.0"
-description = "Self-play driven causal-gap detection and recursive world expansion for fictional settings"
+description = "Self-play exploration and recursive rule expansion for fictional worlds"
 readme = "README.md"
 requires-python = ">=3.11"
-license = {text = "MIT"}
-authors = [{name = "SakuraEntropia"}]
+license = { text = "MIT" }
+authors = [{ name = "SakuraEntropia" }]
+keywords = ["agent-skill", "worldbuilding", "simulation", "llm", "reasoning"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Other Audience",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Games/Entertainment :: Simulation",
+  "Topic :: Text Processing :: Markup :: Markdown",
+]
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=7.4"]
+yaml = ["PyYAML>=6.0"]
+dev = [
+  "pytest>=8.0",
+  "pytest-cov>=5.0",
+  "ruff>=0.6",
+  "PyYAML>=6.0",
+]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[project.scripts]
+rwb = "recursive_world_builder.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/SakuraEntropia/recursive-world-builder"
+Issues = "https://github.com/SakuraEntropia/recursive-world-builder/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/recursive_world_builder"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
 pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.coverage.run]
+source = ["recursive_world_builder"]

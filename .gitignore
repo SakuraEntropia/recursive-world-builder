@@ -1,11 +1,48 @@
+# Python
 __pycache__/
 *.py[cod]
 *.egg-info/
-.pytest_cache/
-.venv/
-venv/
+.eggs/
 build/
 dist/
+.venv/
+.venv*/
+venv/
+.python/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Runtime state and generated artifacts
+.rwb/
+demo-output/
+reports/
 *.log
-.DS_Store
+*.trace
+
+# Local / private world data
+private/
+world.local.json
+proposals.local.json
 .env
+.env.*
+secrets/
+*.pem
+*.key
+*.token
+*token*
+*secret*
+credentials*
+auth.json
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

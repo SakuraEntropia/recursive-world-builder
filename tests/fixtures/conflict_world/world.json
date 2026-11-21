@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "world_id": "conflict_world",
+  "title": "Conflict Fixture",
+  "description": "A minimal world with an existing electrical-safety rule that directly conflicts with a proposed shock rule.",
+  "canon_version": 1,
+  "locations": {
+    "street": {"id": "street", "name": "Street", "tags": ["outdoor"], "properties": {}}
+  },
+  "entities": {
+    "mira": {"id": "mira", "name": "Mira", "type": "character", "location_id": "street", "tags": ["human", "biological", "alive", "actor"], "properties": {"health": 100}},
+    "wire": {"id": "wire", "name": "Live Wire", "type": "object", "location_id": "street", "tags": ["energized", "electrical", "hazard"], "properties": {"voltage": 1000}}
+  },
+  "relationships": {},
+  "rules": {
+    "r_existing_safety": {
+      "id": "r_existing_safety",
+      "name": "Live wires are harmless",
+      "description": "Canon declares that touching a live wire leaves the actor at full health.",
+      "domain": "physics",
+      "matcher": {"action_types": ["touch"], "actor_tags_any": ["human"], "target_tags_any": ["energized"]},
+      "effects": [
+        {"kind": "set_property", "target": "actor", "property": "health", "value": 100},
+        {"kind": "emit_event", "target": "actor", "event": "safe_contact", "message": "nothing happens"}
+      ],
+      "priority": 50,
+      "status": "canon",
+      "version": 1
+    }
+  },
+  "constraints": {},
+  "canon": [{"id": "CF-001", "statement": "Live wires are harmless.", "status": "canon"}],
+  "events": [],
+  "regression_suite": [],
+  "source_documents": [],
+  "history": []
+}

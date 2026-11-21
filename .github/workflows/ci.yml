@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+      - name: Lint
+        run: python -m ruff check src tests scripts skills/recursive-world-builder/scripts
+      - name: Format check
+        run: python -m ruff format --check src tests scripts skills/recursive-world-builder/scripts
+      - name: Tests
+        run: python -m pytest
+      - name: Offline demo
+        run: python scripts/run_demo.py --approve
+      - name: Verify example canon is untouched
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          world = json.loads(Path("examples/electric_city/world.json").read_text())
+          assert world["canon_version"] == 1, world["canon_version"]
+          print("example canon v1 intact")
+          PY

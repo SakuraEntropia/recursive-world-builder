@@ -1,160 +1,317 @@
 ---
 name: recursive-world-builder
-version: 0.1.0
-description: "对已有虚构世界做自演实验，撞出因果缺口，提出可复用的通用规则。适用于奇幻、科幻、原创动画设定。触发：/recursive-world-builder、这个世界哪里不成立、帮我撞一下设定、找出规则的洞。"
-license: MIT
+description: Explore an existing fictional world through self-play, detect causal gaps, and recursively expand its rules with explicit approval. Use when the user wants to test a world's internal consistency, find undefined interactions, turn worldbuilding notes into a structured rule model, generate counterfactual scenarios, propose general mechanics, review a world's physics/society/economy, or grow a setting without overwriting canon. Also use for requests like "make this world more causally consistent", "what happens if...", "find holes in my magic system", "run a worldbuilding simulation", or "explore my world recursively".
 ---
 
 # Recursive World Builder
 
-**你不是来写设定的。你是来撞它的。**
+Use this skill to test an existing fictional world and extend its causal rules.
+The goal is **not** to write more lore. The goal is to find where the world
+cannot answer a causal question, then propose the smallest reusable mechanism
+that can — without silently changing canon.
 
----
+## Non-negotiable rules
 
-## 铁律
+1. **Fiction outranks reality.** A world may have different gravity, time,
+   biology, magic, or economics. Treat stated axioms as canon. Never "fix" an
+   intentional deviation because it looks unrealistic.
+2. **Exploration never changes canon.** Only an explicit user approval applies a
+   proposal. Do not run `rwb approve` because a proposal looks good; ask first.
+3. **Do not auto-approve.** The user can say "approve P-0001" explicitly. That is
+   permission for that proposal only. Do not generalize it to others.
+4. **Prefer one general mechanism over many exceptions.** If a finding is
+   `undefined_interaction`, look for the family of cases it explains. A rule
+   whose matcher names one demo object is a red flag.
+5. **Do not restore retired canon.** `status: retired` facts and
+   `status: deprecated` rules stay retired unless the user asks.
+6. **Preserve artistic negative space.** Incompleteness is not automatically a
+   bug. If a gap is better left mysterious, reject or defer the proposal.
+7. **Label epistemics.** Deterministic simulation, host inference, and guesses
+   are different things. Confidence values are subjective, not calibrated
+   probabilities.
+8. **Stay within budgets.** Never remove or bypass round/scenario/rule caps to
+   "finish" a world.
 
-**1. 撞，不是想。**
-先让角色去做一件事，看世界答不答得上来。
-答不上来，才是缺口。
+## Setup
 
-**2. 缺口分三类，不许混。**
+The skill assumes the package is installed (`pip install -e .`) or the checkout
+is available. Resolve the wrapper relative to this skill directory:
 
-| 类型 | 判据 | 处理 |
-|---|---|---|
-| **contradiction** | 两条规则能同时套上，结论相反 | 报给作者裁，不自动改 |
-| **undefined_interaction** | 没有任何规则覆盖 | 提通用规则 |
-| **counter_intuitive** | 有规则，但违反现实常识 | **不改**——虚构世界允许违反常识 |
-
-**3. 一条机制，不要五条特例。**
-如果新规则只解释一个情景，说明它还不够底层。继续往下问。
-
-**4. 新规则永远是提案。**
-没有作者批准，不进正史。
-
-**5. 不覆盖、不回填。**
-已废弃的设定不许复活；`TBD` 不许自己补；作者没说的因果关系不许建。
-
----
-
-## 工作流
-
-### 第一步 · 载入
-
-读 `world.json` 与 `canon/*.md`。
-
-**先跑 `validate()`。**引用坏了先修，别在坏的世界模型上做实验。
-
-**如果世界只有 Markdown、没有 `world.json`：**
-先把 Markdown 里的实体与规则整理成 `world.json`，**整理时不要新增任何设定**。
-
-### 第二步 · 选情景
-
-按三种来源挑：
-
-1. **同地点接触**——两个东西在一个地方，就可能碰上
-2. **边界情况**——极限值、罕见组合、被忽略的物体
-3. **反事实**——如果刚加的规则成立，还会发生什么
-
-**每轮只挑能暴露新东西的，不重复。**
-
-### 第三步 · 自演
-
-**以世界里某个角色的身份行动**，不是以旁白身份。
-
-**写下：他要做什么、他预期什么、世界实际给了他什么。**
-
-### 第四步 · 检缺口
-
-用 `critic.analyse()` 跑，得到结构化结果。
-
-**然后自己再判一次：**
-这条真的是缺口，还是我已经知道的设定？
-
-### 第五步 · 提机制
-
-**问四层，一层比一层深：**
-
-```
-这一件事缺什么后果      → 特例
-这一类事缺什么机制      → 规则
-这个机制依赖什么        → 依赖
-依赖的那层有没有定义    → 更底层的缺口
+```bash
+RWB="python /path/to/recursive-world-builder/skills/recursive-world-builder/scripts/world_builder.py"
 ```
 
-**停在「能解释多个现象」的那一层。**
+If the host has `rwb` on PATH, use `rwb` directly. Always operate on a specific
+world directory (the one containing `world.json`), never on a repository root
+that may contain unrelated private files.
 
-### 第六步 · 反事实
+## Core loop
 
-**新规则一落地，立刻问：它还会影响什么？**
+```text
+load world
+  -> plan scenarios (deterministic probes + host-authored cases)
+  -> simulate with declarative rules
+  -> classify each observation
+  -> deduplicate findings
+  -> draft a general proposal (scripted or host-authored)
+  -> show diffs, conflicts, and tests
+  -> ASK FOR EXPLICIT APPROVAL
+  -> apply + regression gate + snapshot
+  -> re-run counterfactual tests
+  -> report
+  -> optionally explore again
+```
 
-至少四个：
-- 和水／天气／材料交互时
-- 有人做了防护时
-- 物体被破坏时
-- 换了场所时
+## Start a world
 
-### 第七步 · 交提案
+If the user provides Markdown/JSON/YAML notes:
 
-**每条提案至少写：**
+```bash
+$RWB init ./my-world --title "My World"
+$RWB validate ./my-world
+$RWB summary ./my-world
+```
 
-1. 问题
-2. 根因假设
-3. 拟新增规则（作用域、动词、后果）
-4. 预期影响
-5. 潜在冲突
-6. 测试方案
+`init` writes `world.json`, indexes source documents, and creates
+`proposals.json`. Markdown supports a documented entity/location format and
+embedded fenced JSON/YAML world fragments. Unstructured prose is preserved as
+source material, not silently converted into rules. Read
+`references/world-schema.md` when the user's notes need conversion.
 
-**然后停手，等批准。**
+If the world already exists, do not re-init. Validate and inspect it first.
 
----
+## Explore
 
-## 输出格式
+Offline deterministic mode (demo/CI only):
+
+```bash
+$RWB explore ./my-world --rounds 5 --focus physics
+```
+
+Host-reasoning mode (preferred for real settings):
+
+```bash
+$RWB explore ./my-world --rounds 5 --focus physics --architect host --json
+```
+
+Focus: `all`, `physics`, `biology`, `society`, `economy`, `character`.
+
+In host mode, no proposal is generated. You must read the findings and author a
+proposal. Before deciding, read:
+
+- `my-world/world.json` (canon, rules, constraints);
+- `my-world/exploration_cases.json` if present;
+- the latest run JSON under `my-world/.rwb/runs/`;
+- the relevant Markdown sources under `my-world/`.
+
+### What the findings mean
+
+- `explicit_violation` — the scenario breaks a declared constraint. This is an
+  enforcement observation. Do not propose a patch to the constraint unless the
+  user explicitly says the constraint is wrong.
+- `undefined_interaction` — canon is silent. Candidate for a general mechanism.
+- `allowed_but_unrealistic` — canon allows the outcome, reality does not. Keep
+  canon. No proposal.
+- `rule_conflict` — canon rules write the same state incompatibly. Surface the
+  conflict; do not add another exception.
+
+Read `references/causal-critique.md` for the full taxonomy.
+
+## Author a proposal (host mode)
+
+Write a JSON file with at least:
 
 ```json
 {
-  "scenario": "角色触碰高压线",
-  "observation": "规则库没有定义电对人体的后果",
-  "gap_type": "undefined_interaction",
-  "hypothesis": "缺少电学交互机制",
-  "confidence": 0.6,
-  "affected_systems": ["electricity", "materials", "health"],
-  "recommended_action": "propose_general_rule"
+  "title": "Generalized electrical conduction",
+  "problem": "Contact with an energized conductor has no defined consequence.",
+  "root_cause_hypothesis": "The world has no reusable electrical interaction layer.",
+  "rationale": "One conduction cluster explains contact, insulation, water, and metal.",
+  "expected_impacts": [
+    "Insulation becomes a reusable material property.",
+    "Water can become energized without a pool-specific rule."
+  ],
+  "generality": {
+    "scope": "Any biological actor contacting any energized entity.",
+    "special_case": false,
+    "reusable": true
+  },
+  "confidence": 0.7,
+  "rules": [
+    {
+      "id": "r_electric_contact_shock",
+      "name": "Conductive contact injures biological actors",
+      "description": "Biological actors without insulation are injured by energized targets.",
+      "domain": "physics",
+      "matcher": {
+        "action_types": ["touch", "contact", "immerse"],
+        "actor_tags_any": ["biological", "human", "animal"],
+        "actor_tags_none": ["electrically_insulated"],
+        "target_tags_any": ["energized"]
+      },
+      "effects": [
+        {"kind": "modify_property", "target": "actor", "property": "health", "delta": -60},
+        {"kind": "emit_event", "target": "actor", "event": "electric_shock"}
+      ],
+      "priority": 70,
+      "status": "proposed",
+      "depends_on": []
+    }
+  ],
+  "test_plan": [
+    {
+      "id": "T-SHOCK-1",
+      "title": "Mira touches the live line",
+      "actor": "mira",
+      "target": "power_line",
+      "action": {"type": "touch"},
+      "focus": "physics"
+    }
+  ]
 }
 ```
 
-**`confidence` 是主观判断，不是概率。**
-
----
-
-## 什么时候该停
-
-- 到轮数上限
-- 一轮没有新缺口
-- 提案数到顶
-- **再挖下去只是在补细节，不是在补机制**
-
-**最后一条最重要：设定不是越全越好。**
-**留白也是设定的一部分。**
-
----
-
-## 反模式
-
-| 反模式 | 为什么不行 |
-|---|---|
-| 「触电会死」一句补完 | 特例，不解释水、绝缘、天气 |
-| 用现实物理覆盖作者的规则 | 这个世界可能本来就不是那套物理 |
-| 每轮都新增设定 | 世界会肿，不是会完整 |
-| 未经批准就改 `world.json` | 正史被悄悄改了 |
-| 把 `counter_intuitive` 当 bug | 会杀掉作品的怪味 |
-
----
-
-## 脚本
+Then:
 
 ```bash
-PYTHONPATH=src python -m recursive_world_builder.demo <world-dir>
+$RWB propose ./my-world --file proposal.json
+$RWB show ./my-world P-0001
 ```
 
-**脚本只做确定性部分**（载入、匹配、冲突、上限）。
-**推理部分由你完成。**
+Requirements:
+
+- Every rule must carry an explicit id, matcher, effects, priority, and status.
+- Every proposal must include a diff (computed automatically if omitted), at
+  least one counterfactual test, expected impacts, and `generality.special_case`.
+- `confidence` is subjective and must stay between 0 and 1. Never mark it
+  calibrated.
+- Dependencies must refer to canon rules or rules in the same proposal.
+- Do not use a rule id that already exists unless you intend to **modify** it.
+  In that case the diff becomes `action: "modify"` and the old version is kept
+  in world history.
+
+If `propose` reports conflicts, read them before asking for approval. Direct
+conflicts require a separate `--accept-conflicts` decision.
+
+## Review with the user
+
+Show:
+
+- finding type and evidence;
+- the problem and root-cause hypothesis;
+- affected systems;
+- the rule diff (add/modify), dependencies, and conflicts;
+- expected impacts;
+- the counterfactual tests;
+- explicit reminder that confidence is subjective.
+
+Ask a direct question: **"Apply this proposal to canon?"** Do not act on a vague
+"looks fine" if the user did not see the diff. Treat an explicit proposal id as
+approval for that id only.
+
+## Approve, reject, roll back
+
+```bash
+$RWB approve ./my-world P-0001 --yes
+$RWB reject  ./my-world P-0001 --reason "too specific"
+$RWB rollback ./my-world
+```
+
+Approval does all of the following atomically enough for a local tool:
+
+1. blocks on direct conflicts unless overridden;
+2. snapshots current canon;
+3. applies add/modify/deprecate changes;
+4. bumps `canon_version`;
+5. runs the regression suite; on failure it restores the snapshot automatically;
+6. re-runs the proposal's counterfactual tests;
+7. writes a Markdown modification report.
+
+After approval, read the report path and summarize:
+
+- what changed;
+- regression pass/fail;
+- what the counterfactual tests now show;
+- what remains undefined.
+
+## Budgets and stopping
+
+Defaults: 5 rounds, 24 scenarios, 8 new rules, 10 proposals, 2 consecutive
+empty rounds. All are hard caps. Do not raise them without telling the user why.
+Normal stop reasons include:
+
+- `max_rounds`
+- `max_scenarios`
+- `max_new_rules`
+- `max_proposals`
+- `no_new_findings`
+- `no_candidate_scenarios`
+
+`no_candidate_scenarios` means the deterministic planner ran out of probes. It
+does **not** mean the world is complete. A host agent can add scenarios to
+`exploration_cases.json` and explore again.
+
+## Continue recursively
+
+After a patch, the same mechanism usually creates new legitimate questions.
+Re-run exploration with the updated canon:
+
+```bash
+$RWB explore ./my-world --rounds 3 --focus physics --architect host --json
+```
+
+Examples of recursion: energized water, insulation failure, a vehicle hitting a
+pole, a storm interacting with infrastructure, a law about who is liable for
+damage. Stop when further findings are repetitions, low-value, or damage the
+setting's artistic intent.
+
+## Report template
+
+Use this structure when reporting back:
+
+```markdown
+## World explored
+[world id, canon version, focus, budgets]
+
+## Deterministic observations
+[what the engine actually simulated]
+
+## Causal gaps
+[gap type, evidence, affected systems]
+
+## Proposal
+[general mechanism, not a one-off; affected rules]
+
+## Conflicts and dependencies
+[direct/potential conflicts; dependency graph]
+
+## Counterfactual tests
+[scenario -> observed result after approval]
+
+## Regression
+[pass/fail and what stayed unchanged]
+
+## Remaining uncertainty
+[what is still undefined, what is host inference, what is a guess]
+```
+
+## References
+
+Read only what you need:
+
+- `references/world-schema.md` — world format, rules, constraints, canonical
+  ingestion format.
+- `references/causal-critique.md` — gap taxonomy, confidence semantics,
+  deduplication, realism guardrails.
+- `references/workflow.md` — full command workflow, proposal schema, approval
+  and rollback rules, stop conditions.
+
+## What not to do
+
+- Do not invent rules during exploration and claim they are canon.
+- Do not auto-approve or batch-approve proposals.
+- Do not reinterpret a deliberate axiom as a bug.
+- Do not turn every ambiguity into a rule.
+- Do not claim "physics simulation", "formal verification", or "calibrated
+  probability". The engine is a deterministic rule applier.
+- Do not push private source material or API keys into a repository.

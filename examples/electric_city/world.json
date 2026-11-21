@@ -1,116 +1,429 @@
 {
-  "name": "Electric City",
-  "entities": {
-    "person_1": {
-      "id": "person_1",
-      "name": "Lin",
-      "tags": [
-        "human",
-        "alive"
-      ],
-      "properties": {
-        "age": 30
-      },
-      "location": "street"
-    },
-    "pool_1": {
-      "id": "pool_1",
-      "name": "pool",
-      "tags": [
-        "water",
-        "liquid"
-      ],
-      "properties": {
-        "depth_m": 1.2
-      },
-      "location": "street"
-    },
-    "line_1": {
-      "id": "line_1",
-      "name": "high-voltage line",
-      "tags": [
-        "electric",
-        "power",
-        "wired"
-      ],
-      "properties": {
-        "voltage_kv": 10
-      },
-      "location": "street"
-    },
-    "car_1": {
-      "id": "car_1",
-      "name": "car",
-      "tags": [
-        "vehicle",
-        "metal"
-      ],
-      "properties": {
-        "mass_kg": 1200
-      },
-      "location": "street"
-    },
-    "boots_1": {
-      "id": "boots_1",
-      "name": "rubber boots",
-      "tags": [
-        "insulator",
-        "clothing"
-      ],
-      "properties": {},
-      "location": "street"
-    }
+  "schema_version": "1.0",
+  "world_id": "electric_city",
+  "title": "Electric City — The Live Wire",
+  "description": "A near-contemporary river city with an always-live grid and an underspecified rulebook. The demo intentionally starts with a single causal gap: electrical consequences are missing.",
+  "canon_version": 1,
+  "created_at": "2026-01-01T00:00:00+00:00",
+  "updated_at": "2026-01-01T00:00:00+00:00",
+  "settings": {
+    "genre": "near-contemporary urban fantasy",
+    "reality_profile": "near-realist with unresolved electrical physics",
+    "worldbuilding_constraints": [
+      "Fictional axioms outrank real-world intuition.",
+      "Do not convert a proposal into canon without explicit approval.",
+      "Prefer one general mechanism over a pile of object-specific exceptions."
+    ],
+    "demo": true
   },
   "locations": {
     "street": {
       "id": "street",
-      "name": "raised street",
+      "name": "Bellweather Street",
       "tags": [
-        "urban"
+        "outdoor",
+        "urban",
+        "public",
+        "street"
       ],
+      "properties": {
+        "wet": false,
+        "crowded": true
+      },
+      "description": "A narrow street of shops, delivery vans, and exposed utility poles."
+    },
+    "pool": {
+      "id": "pool",
+      "name": "Courtyard Pool",
+      "tags": [
+        "outdoor",
+        "public",
+        "water",
+        "pool"
+      ],
+      "properties": {
+        "deep": true,
+        "chlorinated": false
+      },
+      "description": "A tiled public pool fed by the river."
+    }
+  },
+  "entities": {
+    "mira": {
+      "id": "mira",
+      "name": "Mira Vale",
+      "type": "character",
+      "location_id": "street",
+      "tags": [
+        "human",
+        "alive",
+        "biological",
+        "actor",
+        "citizen"
+      ],
+      "properties": {
+        "health": 100,
+        "alive": true,
+        "wealth": 5
+      },
+      "description": "A courier who knows every shortcut in the district."
+    },
+    "power_line": {
+      "id": "power_line",
+      "name": "Bellweather High-Voltage Line",
+      "type": "object",
+      "location_id": "street",
+      "tags": [
+        "electrical",
+        "energized",
+        "conductor",
+        "outdoor",
+        "hazard"
+      ],
+      "properties": {
+        "voltage": 10000,
+        "current": 200,
+        "operational": true,
+        "integrity": 100
+      },
+      "description": "A live feeder line strung above the street on a weathered pole."
+    },
+    "pole": {
+      "id": "pole",
+      "name": "Bellweather Utility Pole",
+      "type": "object",
+      "location_id": "street",
+      "tags": [
+        "infrastructure",
+        "structural",
+        "pole",
+        "tall",
+        "outdoor"
+      ],
+      "properties": {
+        "integrity": 100
+      },
+      "description": "The pole supports the live feeder line."
+    },
+    "pool_water": {
+      "id": "pool_water",
+      "name": "Courtyard Pool Water",
+      "type": "object",
+      "location_id": "pool",
+      "tags": [
+        "water",
+        "liquid",
+        "fluid",
+        "conductive",
+        "outdoor"
+      ],
+      "properties": {
+        "volume": 5000,
+        "depth": 2.0,
+        "energized": false
+      },
+      "description": "Cold river water in a tiled public pool."
+    },
+    "car": {
+      "id": "car",
+      "name": "Delivery Car",
+      "type": "vehicle",
+      "location_id": "street",
+      "tags": [
+        "vehicle",
+        "car",
+        "metal",
+        "conductor",
+        "movable"
+      ],
+      "properties": {
+        "speed": 0,
+        "integrity": 100
+      },
+      "description": "A compact electric delivery car with a dented bumper."
+    },
+    "crate": {
+      "id": "crate",
+      "name": "Cargo Crate",
+      "type": "object",
+      "location_id": "street",
+      "tags": [
+        "fragile",
+        "crate",
+        "wood"
+      ],
+      "properties": {
+        "integrity": 50
+      },
+      "description": "A stack of produce crates waiting for pickup."
+    },
+    "insulated_boots": {
+      "id": "insulated_boots",
+      "name": "Rubber Work Boots",
+      "type": "object",
+      "location_id": "street",
+      "tags": [
+        "rubber",
+        "insulator",
+        "wearable",
+        "electrically_insulated"
+      ],
+      "properties": {
+        "insulation": 1000
+      },
+      "description": "Heavy rubber boots left by a utility crew."
+    },
+    "council": {
+      "id": "council",
+      "name": "City Council Office",
+      "type": "institution",
+      "location_id": "street",
+      "tags": [
+        "institution",
+        "government",
+        "law",
+        "society"
+      ],
+      "properties": {
+        "legitimacy": 0.8
+      },
+      "description": "A public office with an unstaffed petition desk."
+    },
+    "substation": {
+      "id": "substation",
+      "name": "Fenced Substation",
+      "type": "object",
+      "location_id": "street",
+      "tags": [
+        "infrastructure",
+        "substation",
+        "electrical",
+        "energized",
+        "outdoor"
+      ],
+      "properties": {
+        "integrity": 100
+      },
+      "description": "A fenced transformer yard marked with faded warnings."
+    }
+  },
+  "relationships": {
+    "rel-pole-supports-line": {
+      "id": "rel-pole-supports-line",
+      "source_id": "pole",
+      "target_id": "power_line",
+      "kind": "supports",
       "properties": {}
+    },
+    "rel-mira-owns-boots": {
+      "id": "rel-mira-owns-boots",
+      "source_id": "mira",
+      "target_id": "insulated_boots",
+      "kind": "owns",
+      "properties": {
+        "worn": false
+      }
     }
   },
   "rules": {
-    "R-walk": {
-      "id": "R-walk",
-      "scope": [
-        "human"
-      ],
-      "verb": "enter",
-      "effect": {
-        "moves": true
+    "r_walk_street": {
+      "id": "r_walk_street",
+      "name": "Walking through the street",
+      "description": "A human can walk through an outdoor street without a special event.",
+      "domain": "physics",
+      "matcher": {
+        "action_types": [
+          "walk"
+        ],
+        "actor_tags_any": [
+          "human",
+          "actor"
+        ],
+        "location_tags_any": [
+          "outdoor"
+        ]
       },
-      "rationale": "people can walk",
-      "status": "CANON",
-      "depends_on": [],
-      "source": "canon"
+      "effects": [
+        {
+          "kind": "emit_event",
+          "target": "actor",
+          "event": "walked",
+          "message": "the actor walks through the location"
+        }
+      ],
+      "priority": 10,
+      "status": "canon",
+      "version": 1,
+      "tags": [
+        "movement",
+        "regression"
+      ]
     },
-    "R-wet": {
-      "id": "R-wet",
-      "scope": [
-        "water",
-        "human"
-      ],
-      "verb": "enter",
-      "effect": {
-        "wet": true
+    "r_collision_fragile": {
+      "id": "r_collision_fragile",
+      "name": "Vehicle collision damages fragile cargo",
+      "description": "A vehicle that collides with a fragile object reduces its integrity.",
+      "domain": "physics",
+      "matcher": {
+        "action_types": [
+          "collide"
+        ],
+        "actor_tags_any": [
+          "vehicle",
+          "car"
+        ],
+        "target_tags_any": [
+          "fragile",
+          "crate"
+        ]
       },
-      "rationale": "entering water wets you",
-      "status": "CANON",
-      "depends_on": [],
-      "source": "canon"
+      "effects": [
+        {
+          "kind": "modify_property",
+          "target": "target",
+          "property": "integrity",
+          "delta": -20
+        },
+        {
+          "kind": "add_tag",
+          "target": "target",
+          "tag": "damaged"
+        },
+        {
+          "kind": "emit_event",
+          "target": "target",
+          "event": "cargo_crushed",
+          "message": "the crate takes impact damage"
+        }
+      ],
+      "priority": 50,
+      "status": "canon",
+      "version": 1,
+      "tags": [
+        "kinetics",
+        "regression"
+      ]
+    }
+  },
+  "constraints": {
+    "C-SUBSTATION-1": {
+      "id": "C-SUBSTATION-1",
+      "kind": "prohibition",
+      "severity": "hard",
+      "description": "Residents are prohibited from entering or sabotaging the fenced substation.",
+      "message": "The substation is a prohibited area.",
+      "matcher": {
+        "action_types": [
+          "enter",
+          "sabotage"
+        ],
+        "target_tags_any": [
+          "substation"
+        ]
+      },
+      "source": "source/electric_city.md"
+    },
+    "C-WEATHER-1": {
+      "id": "C-WEATHER-1",
+      "kind": "axiom",
+      "severity": "soft",
+      "description": "Weather in Electric City is atmospheric only; storm damage is not yet defined.",
+      "source": "source/electric_city.md"
+    },
+    "C-GRID-1": {
+      "id": "C-GRID-1",
+      "kind": "axiom",
+      "severity": "hard",
+      "description": "The Bellweather grid is live at all hours; the line is canonically energized.",
+      "source": "source/electric_city.md"
     }
   },
   "canon": [
-    "A district with a raised street, a pool, a power line, and a car.",
-    "Nothing in this world yet says what electricity does to a body."
+    {
+      "id": "CF-001",
+      "statement": "The high-voltage line above Bellweather Street is always energized.",
+      "status": "canon",
+      "source": "source/electric_city.md"
+    },
+    {
+      "id": "CF-002",
+      "statement": "The city treats the grid as public infrastructure and publishes no safety code.",
+      "status": "canon",
+      "source": "source/electric_city.md"
+    },
+    {
+      "id": "CF-003",
+      "statement": "Mira Vale has lived on Bellweather Street for six years and has never seen electricity injure anyone.",
+      "status": "canon",
+      "source": "source/electric_city.md"
+    },
+    {
+      "id": "CF-004",
+      "statement": "The city council has never defined a procedure for ordinary residents who petition it.",
+      "status": "canon",
+      "source": "source/electric_city.md"
+    }
   ],
-  "constraints": [
-    "no magic",
-    "no supernatural recovery"
+  "events": [],
+  "regression_suite": [
+    {
+      "id": "REG-WALK-1",
+      "title": "Mira walks down Bellweather Street",
+      "actor": "mira",
+      "action": {
+        "type": "walk",
+        "tags": [
+          "movement"
+        ]
+      },
+      "focus": "physics",
+      "tags": [
+        "regression"
+      ],
+      "source": "regression"
+    },
+    {
+      "id": "REG-COLLISION-1",
+      "title": "The delivery car hits a crate",
+      "actor": "car",
+      "target": "crate",
+      "action": {
+        "type": "collide",
+        "tags": [
+          "impact"
+        ]
+      },
+      "focus": "physics",
+      "tags": [
+        "regression"
+      ],
+      "source": "regression"
+    }
   ],
-  "metadata": {
-    "demo": true
-  }
+  "source_documents": [
+    {
+      "path": "source/electric_city.md",
+      "title": "Electric City",
+      "sha256": "692f3d0ef21780ea2bf8eedd833bb2192e5b82b8d3d6c9d0aad8c970cbdd779b",
+      "headings": [
+        "Electric City",
+        "Canon",
+        "Entities",
+        "mira — Mira Vale",
+        "power_line — Bellweather High-Voltage Line",
+        "pole — Bellweather Utility Pole",
+        "pool_water — Courtyard Pool",
+        "car — Delivery Car",
+        "crate — Cargo Crate",
+        "insulated_boots — Rubber Boots",
+        "council — City Council Office",
+        "substation — Fenced Substation",
+        "Constraints",
+        "Notes for the host agent"
+      ],
+      "excerpt": "# Electric City Electric City is a near-contemporary river city whose power grid is live at all hours. The setting was originally written as a mood piece, so the prose establishes atmosphere and social texture but says almost nothing about electrical physics. That silence is the point of the demo. ## Canon - The high-voltage line above Bellweather Street is always energized. - The city treats the ",
+      "ingested_at": "2026-11-21T17:38:34+00:00"
+    }
+  ],
+  "history": []
 }

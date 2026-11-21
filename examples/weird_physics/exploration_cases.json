@@ -1,0 +1,26 @@
+{
+  "description": "A deliberate reality-check probe. The world's axiom should win.",
+  "scenarios": [
+    {
+      "id": "EXT-GRAVITY-1",
+      "title": "Lyra drops a coin on the Glass Plateau",
+      "actor": "coin",
+      "target": "ground",
+      "action": {
+        "type": "drop",
+        "tags": [
+          "gravity",
+          "observation"
+        ]
+      },
+      "description": "The result should be classified as allowed but unrealistic, not as a gap to patch.",
+      "focus": "physics",
+      "tags": [
+        "external",
+        "reality_check"
+      ],
+      "real_world_expectation": "Objects fall at 9.8 m/s².",
+      "source": "host-authored-example"
+    }
+  ]
+}

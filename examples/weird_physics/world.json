@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0",
+  "world_id": "weird_physics",
+  "title": "The Slow-Fall Plateau",
+  "description": "A science-fantasy setting whose gravity is deliberately non-Earthlike. It exists to test that the critic preserves fictional axioms instead of 'correcting' them with real-world physics.",
+  "canon_version": 1,
+  "created_at": "2026-01-01T00:00:00+00:00",
+  "updated_at": "2026-01-01T00:00:00+00:00",
+  "settings": {
+    "genre": "science fantasy",
+    "reality_profile": "non-Earth gravity is a canon axiom"
+  },
+  "locations": {
+    "plateau": {
+      "id": "plateau",
+      "name": "Glass Plateau",
+      "tags": [
+        "outdoor",
+        "highland"
+      ],
+      "properties": {
+        "gravity_g": 0.1
+      },
+      "description": "A plateau where dropped objects drift."
+    }
+  },
+  "entities": {
+    "lyra": {
+      "id": "lyra",
+      "name": "Lyra",
+      "type": "character",
+      "location_id": "plateau",
+      "tags": [
+        "human",
+        "biological",
+        "actor"
+      ],
+      "properties": {
+        "health": 100
+      },
+      "description": "An observer."
+    },
+    "coin": {
+      "id": "coin",
+      "name": "Brass Coin",
+      "type": "object",
+      "location_id": "plateau",
+      "tags": [
+        "coin",
+        "metal",
+        "small"
+      ],
+      "properties": {
+        "fall_speed": 0
+      },
+      "description": "A coin."
+    },
+    "ground": {
+      "id": "ground",
+      "name": "Plateau Surface",
+      "type": "object",
+      "location_id": "plateau",
+      "tags": [
+        "ground",
+        "surface"
+      ],
+      "properties": {},
+      "description": "The ground."
+    }
+  },
+  "relationships": {},
+  "rules": {
+    "r_slow_fall": {
+      "id": "r_slow_fall",
+      "name": "Dropped objects drift downward",
+      "description": "On the plateau, dropped objects fall at a tenth of Earth gravity. This is an intentional axiom, not an error.",
+      "domain": "physics",
+      "matcher": {
+        "action_types": [
+          "drop"
+        ],
+        "actor_tags_any": [
+          "coin",
+          "small"
+        ],
+        "target_tags_any": [
+          "ground",
+          "surface"
+        ]
+      },
+      "effects": [
+        {
+          "kind": "set_property",
+          "target": "actor",
+          "property": "fall_speed",
+          "value": 0.1
+        },
+        {
+          "kind": "add_tag",
+          "target": "actor",
+          "tag": "drifting"
+        },
+        {
+          "kind": "emit_event",
+          "target": "actor",
+          "event": "slow_fall",
+          "message": "the coin drifts toward the ground"
+        }
+      ],
+      "priority": 50,
+      "status": "canon",
+      "version": 1,
+      "defies_real_world_expectation": true,
+      "tags": [
+        "gravity",
+        "axiom"
+      ]
+    }
+  },
+  "constraints": {
+    "C-GRAV-1": {
+      "id": "C-GRAV-1",
+      "kind": "axiom",
+      "severity": "hard",
+      "description": "Gravity on the Glass Plateau is one-tenth of Earth standard. Fictional axioms outrank real-world intuition.",
+      "source": "README.md"
+    }
+  },
+  "canon": [
+    {
+      "id": "CF-001",
+      "statement": "The Glass Plateau's gravity is one-tenth Earth standard.",
+      "status": "canon",
+      "source": "README.md"
+    },
+    {
+      "id": "CF-002",
+      "statement": "Falling objects visibly drift instead of dropping.",
+      "status": "canon",
+      "source": "README.md"
+    }
+  ],
+  "events": [],
+  "regression_suite": [],
+  "source_documents": [],
+  "history": []
+}

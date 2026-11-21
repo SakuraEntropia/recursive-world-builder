@@ -1,0 +1,35 @@
+{
+  "description": "Host-authored scenarios extend the deterministic probe planner. They are inputs, not expected answers.",
+  "scenarios": [
+    {
+      "id": "EXT-SOC-1",
+      "title": "Mira petitions the city council",
+      "actor": "mira",
+      "target": "council",
+      "action": {
+        "type": "petition",
+        "tags": ["social", "institutional"],
+        "description": "Mira asks the council to publish an electrical safety code."
+      },
+      "description": "A social probe: the prose says the council has no petition procedure.",
+      "focus": "society",
+      "tags": ["external", "society", "boundary"],
+      "source": "host-authored-example"
+    },
+    {
+      "id": "EXT-LAW-1",
+      "title": "Mira enters the fenced substation",
+      "actor": "mira",
+      "target": "substation",
+      "action": {
+        "type": "enter",
+        "tags": ["institutional", "boundary"],
+        "description": "Mira steps through the fence into the prohibited substation."
+      },
+      "description": "This intentionally violates a hard constraint. It must be classified as an enforcement observation, not auto-patched.",
+      "focus": "society",
+      "tags": ["external", "society", "boundary"],
+      "source": "host-authored-example"
+    }
+  ]
+}
