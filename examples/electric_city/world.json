@@ -1,0 +1,116 @@
+{
+  "name": "Electric City",
+  "entities": {
+    "person_1": {
+      "id": "person_1",
+      "name": "Lin",
+      "tags": [
+        "human",
+        "alive"
+      ],
+      "properties": {
+        "age": 30
+      },
+      "location": "street"
+    },
+    "pool_1": {
+      "id": "pool_1",
+      "name": "pool",
+      "tags": [
+        "water",
+        "liquid"
+      ],
+      "properties": {
+        "depth_m": 1.2
+      },
+      "location": "street"
+    },
+    "line_1": {
+      "id": "line_1",
+      "name": "high-voltage line",
+      "tags": [
+        "electric",
+        "power",
+        "wired"
+      ],
+      "properties": {
+        "voltage_kv": 10
+      },
+      "location": "street"
+    },
+    "car_1": {
+      "id": "car_1",
+      "name": "car",
+      "tags": [
+        "vehicle",
+        "metal"
+      ],
+      "properties": {
+        "mass_kg": 1200
+      },
+      "location": "street"
+    },
+    "boots_1": {
+      "id": "boots_1",
+      "name": "rubber boots",
+      "tags": [
+        "insulator",
+        "clothing"
+      ],
+      "properties": {},
+      "location": "street"
+    }
+  },
+  "locations": {
+    "street": {
+      "id": "street",
+      "name": "raised street",
+      "tags": [
+        "urban"
+      ],
+      "properties": {}
+    }
+  },
+  "rules": {
+    "R-walk": {
+      "id": "R-walk",
+      "scope": [
+        "human"
+      ],
+      "verb": "enter",
+      "effect": {
+        "moves": true
+      },
+      "rationale": "people can walk",
+      "status": "CANON",
+      "depends_on": [],
+      "source": "canon"
+    },
+    "R-wet": {
+      "id": "R-wet",
+      "scope": [
+        "water",
+        "human"
+      ],
+      "verb": "enter",
+      "effect": {
+        "wet": true
+      },
+      "rationale": "entering water wets you",
+      "status": "CANON",
+      "depends_on": [],
+      "source": "canon"
+    }
+  },
+  "canon": [
+    "A district with a raised street, a pool, a power line, and a car.",
+    "Nothing in this world yet says what electricity does to a body."
+  ],
+  "constraints": [
+    "no magic",
+    "no supernatural recovery"
+  ],
+  "metadata": {
+    "demo": true
+  }
+}

@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""Thin wrapper so the skill can be run without installing the package."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "src"))
+
+from recursive_world_builder.demo import main  # noqa: E402
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv))
